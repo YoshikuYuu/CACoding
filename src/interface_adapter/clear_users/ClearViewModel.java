@@ -11,7 +11,7 @@ import java.beans.PropertyChangeSupport;
 public class ClearViewModel extends ViewModel {
     private ClearState state = new ClearState();
 
-    public ClearViewModel(String viewName) {
+    public ClearViewModel() {
         super("clear");
     }
 
