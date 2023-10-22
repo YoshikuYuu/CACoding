@@ -13,6 +13,7 @@ public class ClearPresenter implements ClearOutputBoundary {
     @Override
     public void prepareSuccessView(ClearOutputData clearOutputData) {
         String deletedUsersString = String.join("\n", clearOutputData.getDeleted_users());
+        deletedUsersString  = "Users deleted: \n" + deletedUsersString;
 
         ClearState clearState = clearViewModel.getState();
         clearState.setDeletedUsers(deletedUsersString);
