@@ -1,5 +1,8 @@
 package view;
 
+import interface_adapter.clear_users.ClearController;
+import interface_adapter.clear_users.ClearState;
+import interface_adapter.clear_users.ClearViewModel;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupState;
 import interface_adapter.signup.SignupViewModel;
@@ -17,20 +20,26 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
     public final String viewName = "sign up";
 
     private final SignupViewModel signupViewModel;
+    private final ClearViewModel clearViewModel;
     private final JTextField usernameInputField = new JTextField(15);
     private final JPasswordField passwordInputField = new JPasswordField(15);
     private final JPasswordField repeatPasswordInputField = new JPasswordField(15);
     private final SignupController signupController;
+    private final ClearController clearController;
 
     private final JButton signUp;
     private final JButton cancel;
     private final JButton clear;
 
-    public SignupView(SignupController controller, SignupViewModel signupViewModel) {
+    public SignupView(SignupController signupCon, SignupViewModel signupViewModel,
+                      ClearController clearCon, ClearViewModel clearViewModel) {
 
-        this.signupController = controller;
+        this.signupController = signupCon;
         this.signupViewModel = signupViewModel;
+        this.clearController = clearCon;
+        this.clearViewModel = clearViewModel;
         signupViewModel.addPropertyChangeListener(this);
+        clearViewModel.addPropertyChangeListener(this);
 
         JLabel title = new JLabel(SignupViewModel.TITLE_LABEL);
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -73,12 +82,14 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
 
         // TODO Add the body to the actionPerformed method of the action listener below
         //      for the "clear" button. You'll need to write the controller before
-        //      you can complete this.
+        //      you can complete this. DONE?
         clear.addActionListener(
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-
+                        if (e.getSource().equals(clear)) {
+                            clearController.execute();
+                        }
                     }
                 }
         );
@@ -168,9 +179,18 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        SignupState state = (SignupState) evt.getNewValue();
-        if (state.getUsernameError() != null) {
-            JOptionPane.showMessageDialog(this, state.getUsernameError());
+        if (evt.getPropertyName().equals("signup state")) {
+            SignupState state = (SignupState) evt.getNewValue();
+            if (state.getUsernameError() != null) {
+                JOptionPane.showMessageDialog(this, state.getUsernameError());
+            }
+        } else if (evt.getPropertyName().equals("clear state")) {
+            ClearState state = (ClearState) evt.getNewValue();
+            if (state.getDeletedUsers() != null) {
+                JOptionPane.showMessageDialog(this, state.getDeletedUsers());
+            } else {
+                JOptionPane.showMessageDialog(this, state.getNoUsersError());
+            }
         }
     }
 }
